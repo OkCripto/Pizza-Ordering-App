@@ -3,7 +3,6 @@ import { Tabs } from "expo-router";
 import React from "react";
 
 import Colors from "@/constants/Colors";
-import { useClientOnlyValue } from "@components/useClientOnlyValue";
 import { useColorScheme } from "@components/useColorScheme";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
@@ -21,10 +20,10 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors.light.background,
-          tabBarInactiveTintColor: "gainsboro",
-          tabBarStyle:{
-            backgroundColor: Colors.light.tint,
-          }
+        tabBarInactiveTintColor: "gainsboro",
+        tabBarStyle: {
+          backgroundColor: Colors.light.tint,
+        },
       }}
     >
       <Tabs.Screen name="index" options={{ href: null }} />
@@ -39,9 +38,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="orders"
         options={{
           title: "Orders",
+          headerShown: false,
           tabBarIcon: ({ color }) => <TabBarIcon name="list" color={color} />,
         }}
       />
