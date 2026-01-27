@@ -10,6 +10,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
 
+import AuthProvider from "@/providers/AuthProvider";
 import CartProvider from "@/providers/CartProvider";
 import { useColorScheme } from "@components/useColorScheme";
 
@@ -47,7 +48,11 @@ export default function RootLayout() {
     return null;
   }
 
-  return <RootLayoutNav />;
+  return (
+    <AuthProvider>
+      <RootLayoutNav />
+    </AuthProvider>
+  );
 }
 
 function RootLayoutNav() {
