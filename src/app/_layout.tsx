@@ -12,6 +12,7 @@ import "react-native-reanimated";
 
 import AuthProvider from "@/providers/AuthProvider";
 import CartProvider from "@/providers/CartProvider";
+import QueryProvider from "@/providers/QueryProvider";
 import { useColorScheme } from "@components/useColorScheme";
 
 export {
@@ -50,7 +51,9 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
-      <RootLayoutNav />
+      <QueryProvider>
+        <RootLayoutNav />
+      </QueryProvider>
     </AuthProvider>
   );
 }
