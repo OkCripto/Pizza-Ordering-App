@@ -1,6 +1,8 @@
-import { CartItem, Product } from "@/types";
+import { CartItem, Tables } from "@/types";
 import { randomUUID } from "expo-crypto";
 import { createContext, PropsWithChildren, useContext, useState } from "react";
+
+type Product = Tables<"products">;
 
 type CartType = {
   items: CartItem[];
@@ -20,10 +22,11 @@ const CartProvider = ({ children }: PropsWithChildren) => {
   const [items, setItems] = useState<CartItem[]>([]);
 
   const addItem = (product: Product, size: CartItem["size"]) => {
-
-    const existingItem = items.find(item => item.product === product && item.size === size);
+    const existingItem = items.find(
+      (item) => item.product === product && item.size === size,
+    );
     if (existingItem) {
-      updateQuantity(existingItem.id, 1)
+      updateQuantity(existingItem.id, 1);
       return;
     }
 
@@ -41,16 +44,21 @@ const CartProvider = ({ children }: PropsWithChildren) => {
   };
 
   const updateQuantity = (itemId: string, amount: -1 | 1) => {
-       setItems(
-           items.map((item) =>
-               item.id !== itemId
-                   ? item
-                   : {...item, quantity: item.quantity + amount}
-           ).filter((item) => item.quantity > 0)
-       );
+    setItems(
+      items
+        .map((item) =>
+          item.id !== itemId
+            ? item
+            : { ...item, quantity: item.quantity + amount },
+        )
+        .filter((item) => item.quantity > 0),
+    );
   };
 
-  const total= items.reduce((sum, item) => (sum += item.product.price * item.quantity), 0);
+  const total = items.reduce(
+    (sum, item) => (sum += item.product.price * item.quantity),
+    0,
+  );
 
   return (
     <CartContext.Provider value={{ items, addItem, updateQuantity, total }}>
