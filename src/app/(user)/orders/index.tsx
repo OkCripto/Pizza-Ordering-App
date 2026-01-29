@@ -1,8 +1,18 @@
-import orders from "@assets/data/orders";
+import { useMyOrderList } from "@/api/orders";
 import OrderListItem from "@components/OrderListItem";
-import { FlatList } from "react-native";
+import { ActivityIndicator, FlatList, Text } from "react-native";
 
 export default function OrderScreen() {
+  const { data: orders, isLoading, error } = useMyOrderList();
+
+  if (isLoading) {
+    return <ActivityIndicator />;
+  }
+
+  if (error) {
+    return <Text>Error: {error.message}</Text>;
+  }
+
   return (
     <FlatList
       data={orders}
