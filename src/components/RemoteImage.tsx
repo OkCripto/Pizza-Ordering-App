@@ -12,6 +12,10 @@ const RemoteImage = ({ path, fallback, ...imageProps }: RemoteImageProps) => {
 
   useEffect(() => {
     if (!path) return;
+    if (path.startsWith("http")) {
+      setImage(path);
+      return;
+    }
     (async () => {
       setImage("");
       const { data, error } = await supabase.storage
