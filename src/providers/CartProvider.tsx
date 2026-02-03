@@ -3,7 +3,13 @@ import { useInsertOrder } from "@/api/orders";
 import { CartItem, Tables } from "@/types";
 import { randomUUID } from "expo-crypto";
 import { router } from "expo-router";
-import { createContext, PropsWithChildren, useContext, useState } from "react";
+import {
+  createContext,
+  PropsWithChildren,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
 
 type Product = Tables<"products">;
 
@@ -96,13 +102,12 @@ const CartProvider = ({ children }: PropsWithChildren) => {
     });
   };
 
-  return (
-    <CartContext.Provider
-      value={{ items, addItem, updateQuantity, total, checkout }}
-    >
-      {children}
-    </CartContext.Provider>
+  const value = useMemo(
+    () => ({ items, addItem, updateQuantity, total, checkout }),
+    [items, total],
   );
+
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };
 
 export default CartProvider;

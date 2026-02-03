@@ -1,6 +1,7 @@
 import { useProductList } from "@/api/products";
 import ProductListItem from "@/components/ProductListItem";
-import { ActivityIndicator, FlatList, Text } from "react-native";
+import { FlashList } from "@shopify/flash-list";
+import { ActivityIndicator, Text } from "react-native";
 
 export default function MenuScreen() {
   const { data: products, error, isLoading } = useProductList();
@@ -14,12 +15,12 @@ export default function MenuScreen() {
   }
 
   return (
-    <FlatList
+    <FlashList
       data={products}
       renderItem={({ item }) => <ProductListItem product={item} />}
       numColumns={2}
-      contentContainerStyle={{ gap: 10, padding: 10 }}
-      columnWrapperStyle={{ gap: 10 }}
+      contentContainerStyle={{ padding: 10 }}
+      estimatedItemSize={240}
     />
   );
 }

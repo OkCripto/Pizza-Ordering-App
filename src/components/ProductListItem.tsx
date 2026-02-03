@@ -1,4 +1,5 @@
 import { Link, useSegments } from "expo-router";
+import { memo } from "react";
 import { Pressable, Text } from "react-native";
 import { Tables } from "../types";
 import appStyles from "./appStyles";
@@ -11,7 +12,7 @@ type ProductListItemProps = {
   product: Tables<"products">;
 };
 
-const ProductListItem = ({ product }: ProductListItemProps) => {
+const ProductListItem = memo(({ product }: ProductListItemProps) => {
   const segments = useSegments();
 
   return (
@@ -28,6 +29,6 @@ const ProductListItem = ({ product }: ProductListItemProps) => {
       </Pressable>
     </Link>
   );
-};
+});
 
 export default ProductListItem;
