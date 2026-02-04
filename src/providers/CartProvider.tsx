@@ -1,5 +1,7 @@
 import { useInsertOrderItems } from "@/api/order-items";
 import { useInsertOrder } from "@/api/orders";
+import Colors from "@/constants/Colors";
+import { supabase } from "@/lib/supabase";
 import { CartItem, Tables } from "@/types";
 import { randomUUID } from "expo-crypto";
 import { router } from "expo-router";
@@ -10,6 +12,8 @@ import {
   useMemo,
   useState,
 } from "react";
+import { Alert } from "react-native";
+import RazorpayCheckout from "react-native-razorpay";
 
 type Product = Tables<"products">;
 
@@ -77,13 +81,59 @@ const CartProvider = ({ children }: PropsWithChildren) => {
     setItems([]);
   };
 
-  const checkout = () => {
-    insertOrder(
-      { total },
-      {
-        onSuccess: saveOrderItems,
-      },
-    );
+  const checkout = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke(
+        "razorpay-order",
+        {
+          body: { amount: total },
+        },
+      );
+
+      if (error || !data) {
+        Alert.alert("Error", "Failed to initialize payment");
+        console.error(error);
+        return;
+      }
+
+      const options = {
+        description: "Ordering Food",
+        image:
+          "https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png",
+        currency: "INR",
+        key: process.env.EXPO_PUBLIC_RAZORPAY_KEY_ID!,
+        amount: data.amount,
+        name: "FoodOrdering",
+        order_id: data.id,
+        prefill: {
+          email: "user@example.com",
+          contact: "9191919191",
+          name: "User",
+        },
+        theme: { color: Colors.light.tint },
+      };
+
+      RazorpayCheckout.open(options)
+        .then((data: { razorpay_payment_id: string }) => {
+          // handle success
+          insertOrder(
+            {
+              total,
+              razorpay_payment_id: data.razorpay_payment_id,
+            },
+            {
+              onSuccess: saveOrderItems,
+            },
+          );
+        })
+        .catch((error: { code: string; description: string }) => {
+          // handle failure
+          Alert.alert(`Error: ${error.code} | ${error.description}`);
+        });
+    } catch (e) {
+      console.log(e);
+      Alert.alert("Error", "Something went wrong");
+    }
   };
 
   const saveOrderItems = (order: Tables<"orders">) => {
